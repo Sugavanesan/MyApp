@@ -45,7 +45,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
       <Text
         style={[
           styles.sectionDescription,
-          {
+          { 
             color: isDarkMode ? Colors.light : Colors.dark, 
           },
         ]}>
