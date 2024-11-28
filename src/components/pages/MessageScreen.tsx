@@ -6,8 +6,8 @@ import firestore from '@react-native-firebase/firestore';
 const MessageScreen = () => {
 
     const GetData = async () => {
-        const data = await firestore().collection('users')
-        console.log({ data })
+        const response = await firestore().collection('users').doc("XVHxb14y8Ss7yUGKd0Kd").get()
+        console.log('response-->', JSON.stringify(response.data()))
     }
 
     useEffect(() => {

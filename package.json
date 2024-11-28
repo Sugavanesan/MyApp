@@ -10,7 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@react-native-firebase/app": "^21.6.0",
+    "@react-native-firebase/app": "^21.6.1",
+    "@react-native-firebase/auth": "^21.6.1",
     "@react-native-firebase/firestore": "^21.6.0",
     "@react-navigation/bottom-tabs": "^7.0.7",
     "@react-navigation/native": "^7.0.4",

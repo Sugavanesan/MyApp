@@ -17,7 +17,8 @@
                     },
                     "createdAt": "2024-11-27T12:10:00Z",
                     "updatedAt": "2024-11-27T12:00:00Z",
-                    "isPrivate": false
+                    "isPrivate": false,
+                    "likes": 0
                 }
             }
         }
@@ -31,7 +32,9 @@
             },
             "createdAt": "2024-11-27T12:10:00Z",
             "updatedAt": "2024-11-27T12:00:00Z",
-            "isPrivate": false
+            "isPrivate": false,
+            "createdBy": "userId2",
+            "likes": 0
         }
     },
     "Discussions": {
@@ -43,15 +46,17 @@
             "participants": {
                 "userId": {
                     "pinned": true,
-                    "messageCount": 1,
-                    "participantsStatus": 1
+                    "UnreadCount": 1,
+                    "participantsStatus": 1,
+                    "archive": false
                 }
             },
             "Messages": {
                 "messageId1": {
                     "sentBy": "userId1",
                     "message": "Are we still meeting at 5?",
-                    "createdAt": "2024-11-27T12:25:00Z",
+                    "sentAt": "2024-11-27T12:25:00Z",
+                    "isDelete": false,
                     "media": {
                         "type": "image",
                         "url": "https://firebase.storage.url/image2.jpg"
