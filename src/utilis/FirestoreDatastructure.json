@@ -1,0 +1,63 @@
+{
+    "Users": {
+        "userId1": {
+            "userName": "JohnDoe",
+            "nickName": "Johnny",
+            "dob": "1990-01-01",
+            "private_account": true,
+            "profilePhoto": "https://firebase.storage.url/profile1.jpg",
+            "createdAt": "2024-11-27T12:00:00Z",
+            "updatedAt": "2024-11-27T12:00:00Z",
+            "Posts": {
+                "post_Id": {
+                    "content": "Hello world!",
+                    "media": {
+                        "type": "image",
+                        "url": "https://firebase.storage.url/image1.jpg"
+                    },
+                    "createdAt": "2024-11-27T12:10:00Z",
+                    "updatedAt": "2024-11-27T12:00:00Z",
+                    "isPrivate": false
+                }
+            }
+        }
+    },
+    "Gallery": {
+        "post_Id": {
+            "content": "Hello world!",
+            "media": {
+                "type": "image",
+                "url": "https://firebase.storage.url/image1.jpg"
+            },
+            "createdAt": "2024-11-27T12:10:00Z",
+            "updatedAt": "2024-11-27T12:00:00Z",
+            "isPrivate": false
+        }
+    },
+    "Discussions": {
+        "discussionId1": {
+            "createdBy": "userId1",
+            "createdAt": "2024-11-27T12:20:00Z",
+            "last_message": "helllo",
+            "title": "grp1",
+            "participants": {
+                "userId": {
+                    "pinned": true,
+                    "messageCount": 1,
+                    "participantsStatus": 1
+                }
+            },
+            "Messages": {
+                "messageId1": {
+                    "sentBy": "userId1",
+                    "message": "Are we still meeting at 5?",
+                    "createdAt": "2024-11-27T12:25:00Z",
+                    "media": {
+                        "type": "image",
+                        "url": "https://firebase.storage.url/image2.jpg"
+                    }
+                }
+            }
+        }
+    }
+}

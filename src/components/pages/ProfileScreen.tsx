@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import useAppNavigation from '../../navigators/useAppNavigation';
 import WorkingProgresScreen from '../templates/WorkingProgresScreen';
 
@@ -11,10 +11,10 @@ const ProfileScreen = () => {
             'headerTitle': "Profile"
         })
     }, [navigation])
-    
+
     return (
         <WorkingProgresScreen>
-            {"Profile"}
+            <Text>Profile</Text>
         </WorkingProgresScreen>
     );
 }
