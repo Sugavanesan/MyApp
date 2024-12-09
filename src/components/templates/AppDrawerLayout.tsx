@@ -65,7 +65,6 @@ const AppDrawerLayout: FC<PropsWithChildren<AppDrawerLayoutProps>> = ({ children
         <Portal>
             <Modal visible={visible} onRequestClose={handleCloseDrawer} transparent>
                 <GestureHandlerRootView style={{ flex: 1 }}>
-
                     <Animated.View style={[styles.container, opacityAnimStyle]}>
                         <GestureDetector gesture={pan}  >
                             <Animated.View style={[styles.drawer, { width: width * 0.8 }, animStyle]}>
@@ -74,7 +73,6 @@ const AppDrawerLayout: FC<PropsWithChildren<AppDrawerLayoutProps>> = ({ children
                         </GestureDetector>
                         <TouchableOpacity style={[styles.overlay]} onPress={handleCloseDrawer} />
                     </Animated.View>
-
                 </GestureHandlerRootView>
             </Modal>
         </Portal>

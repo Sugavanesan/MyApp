@@ -42,15 +42,6 @@ const DiscussionScreen = () => {
             <AppButton title={'click'} onPress={function (): void {
                 setOpen(true)
             }} />
-            <AppDrawerLayout visible={open} closeDrawer={() => {
-                setOpen(false)
-            }}
-                children={
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ width: 100, height: 100, backgroundColor: 'red' }} />
-                        </View>
-                }
-            />
         </KeyboardAvoidingView>
     );
 }
