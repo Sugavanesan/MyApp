@@ -1,9 +1,19 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text } from 'react-native';
-import WorkingProgresScreen from '../templates/WorkingProgresScreen';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import useAppNavigation from '../../navigators/useAppNavigation';
+import ChatInfoCard from '../molecules/ChatInfoCard';
+import { Images } from '../../utilis/Images';
 
 const MessageScreen = () => {
+    const navigation = useAppNavigation()
+
+    useEffect(() => {
+        navigation.setScreenOptions({
+            'headerTitle': "Message",
+            'headerTitleAlign': 'center',
+        })
+    }, [navigation])
 
     const GetData = async () => {
         const response = await firestore().collection('users').doc("XVHxb14y8Ss7yUGKd0Kd").get()
@@ -15,9 +25,26 @@ const MessageScreen = () => {
     }, [])
 
     return (
-        <WorkingProgresScreen>
-            <Text>MessageScreen</Text>
-        </WorkingProgresScreen>
+        <View>
+            <FlatList
+                data={Array.from({ length: 100 })}
+                renderItem={({ item, index }) => {
+                    return (
+                        <Pressable onPress={() => navigation.navigation.navigate('discussionScreen')}
+                        style={({pressed})=>({opacity:pressed?0.8:1})}
+                        >
+                            <ChatInfoCard 
+                            image={Images.ic_home}
+                             title={'Saru Bala'} 
+                             lastMessage={'hii saptiya'} 
+                             time={'10.05 p.m'} 
+                             unreadCount={10}
+                            />
+                        </Pressable>
+                    )
+                }}
+            />
+        </View>
     );
 }
 

@@ -1,10 +1,20 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-
-const AppTextInput = () => {
+import React, { FC } from 'react';
+import { StyleSheet, View, ViewStyle } from 'react-native';
+import { TextInput, TextInputProps } from 'react-native-paper';
+type AppTextInputProps = {
+    style?:ViewStyle
+    props?:TextInputProps
+    value?: string
+    onChangeText:(text: string) => void
+}
+const AppTextInput:FC<AppTextInputProps> = ({value, onChangeText,props,style}) => {
     return (
-        <View>
-            
+        <View style={[style,{}]}>
+            <TextInput
+                value={value}
+                onChangeText={onChangeText}
+                {...props}
+            />
         </View>
     );
 }

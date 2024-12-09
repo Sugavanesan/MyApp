@@ -6,7 +6,9 @@ export type AppStackNavigationType = {
     feedScreen: undefined,
     settingsScreen: undefined,
     profileScreen: undefined,
-    discussionScreen: undefined,
+    discussionScreen: {
+        discussionId: number
+    },
     addPhotoScreen: undefined
 
 }
