@@ -13,13 +13,13 @@ const ChatInfoCard: FC<ChatInfoCardType> = ({ style, image, title, lastMessage, 
     return (
         <View style={[{
             flex: 1, flexDirection: 'row', justifyContent: 'center', borderBottomColor: 'lightgray', borderBottomWidth: 1,
-            alignItems: 'center', gap: 10, paddingHorizontal: 20, paddingVertical: 10, backgroundColor: 'white'
+            alignItems: 'center', gap: 10, paddingHorizontal: 14, paddingVertical: 10, backgroundColor: 'white'
         }, style]}>
             <View style={{
-                borderWidth: 1, borderColor: 'black', borderRadius: 30,
-                justifyContent: 'center', alignItems: 'center', padding: 2
+                borderWidth: 1, borderColor: 'black', borderRadius: 50,
+                justifyContent: 'center', alignItems: 'center', padding: 5
             }} >
-                <Image source={image} style={{ resizeMode: 'contain', width: 50, height: 50 }} />
+                <Image source={image} style={{ resizeMode: 'contain', width: 30, height: 30 }} />
             </View>
             <View style={{ flex: 1, gap: 4 }}>
                 <Text numberOfLines={1} style={{ fontWeight: 'bold', fontSize: 16 }}>{title}</Text>
@@ -29,9 +29,9 @@ const ChatInfoCard: FC<ChatInfoCardType> = ({ style, image, title, lastMessage, 
                 <Text>{time}</Text>
                 <View style={{
                     backgroundColor: 'lightblue', borderWidth: 1, borderRadius: 50,
-                    justifyContent: 'center', alignItems: 'center',paddingVertical:2,paddingHorizontal:6
+                    justifyContent: 'center', alignItems: 'center', paddingVertical: 2, paddingHorizontal: 6
                 }}>
-                    <Text style={{ fontSize:14 }}>{unreadCount}</Text>
+                    <Text style={{ fontSize: 14 }}>{unreadCount}</Text>
                 </View>
             </View>
         </View>

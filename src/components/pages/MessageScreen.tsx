@@ -27,18 +27,20 @@ const MessageScreen = () => {
     return (
         <View>
             <FlatList
-                data={Array.from({ length: 100 })}
+                data={Array.from({ length: 20 })}
                 renderItem={({ item, index }) => {
                     return (
-                        <Pressable onPress={() => navigation.navigation.navigate('discussionScreen')}
-                        style={({pressed})=>({opacity:pressed?0.8:1})}
+                        <Pressable onPress={() => navigation.navigation.navigate('discussionScreen', {
+                            'discussionId': index
+                        })}
+                            style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
                         >
-                            <ChatInfoCard 
-                            image={Images.ic_home}
-                             title={'Saru Bala'} 
-                             lastMessage={'hii saptiya'} 
-                             time={'10.05 p.m'} 
-                             unreadCount={10}
+                            <ChatInfoCard
+                                image={Images.ic_male}
+                                title={'Virat kholi'}
+                                lastMessage={'hii da'}
+                                time={'10.05 p.m'}
+                                unreadCount={10}
                             />
                         </Pressable>
                     )
