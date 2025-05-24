@@ -1,5 +1,5 @@
 export type AppStackNavigationType = {
-    mainTabs:undefined
+    mainTabs: undefined
     homeScreen: undefined,
     searchScreen: undefined,
     MessageScreen: undefined,
@@ -10,5 +10,6 @@ export type AppStackNavigationType = {
         discussionId: number
     },
     addPhotoScreen: undefined
-
+    loginscreen: undefined
+    registerscreen: undefined
 }
