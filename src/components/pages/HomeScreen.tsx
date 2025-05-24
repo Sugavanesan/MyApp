@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import WorkingProgresScreen from '../templates/WorkingProgresScreen';
+import useAppNavigation from '../../navigators/useAppNavigation';
 
 const HomeScreen = () => {
+    const { navigation, setScreenOptions } = useAppNavigation()
+
+    useEffect(() => {
+        setScreenOptions({
+            headerTitle: 'Home'
+        })
+    }, [navigation])
+
     return (
         <WorkingProgresScreen>
-            <Text>Home Screen</Text>
+            <Text>working in progress</Text>
         </WorkingProgresScreen>
     );
 }

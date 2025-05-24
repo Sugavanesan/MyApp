@@ -15,7 +15,10 @@ const RouteNavigation = () => {
     const authDetails = useAppSelector(state => state.authreducer)
 
     const AuthStack = (
-        <Stack.Navigator>
+        <Stack.Navigator 
+            initialRouteName='mainTabs'
+        >
+            <Stack.Screen name='mainTabs' component={AppTabBar}  options={{ headerShown: false }} />
             <Stack.Screen name='profileScreen' component={ProfileScreen} />
             <Stack.Screen name='addPhotoScreen' component={AddPhotoScreen} />
             <Stack.Screen name='discussionScreen' component={DiscussionScreen} />

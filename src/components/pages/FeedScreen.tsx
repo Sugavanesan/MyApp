@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import WorkingProgresScreen from '../templates/WorkingProgresScreen';
+import useAppNavigation from '../../navigators/useAppNavigation';
 
 const FeedScreen = () => {
+    const { navigation, setScreenOptions } = useAppNavigation()
+
+    useEffect(() => {
+        setScreenOptions({
+            headerTitle: 'Feed'
+        })
+    }, [navigation])
+
     return (
         <WorkingProgresScreen>
-            <Text>Feed Screen</Text>
+            <Text>working in progress</Text>
         </WorkingProgresScreen>
     );
 }

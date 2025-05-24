@@ -14,7 +14,7 @@ const SettingsScreen = () => {
     }, [navigation])
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <View>
                 <AppButton title={'go to profile SCreen'} style={{ width: '50%', alignSelf: 'center' }}
                     onPress={() => navigation.navigate('profileScreen')} />

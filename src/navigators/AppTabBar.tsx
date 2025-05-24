@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import { Image, ImageSourcePropType, StyleSheet, } from 'react-native';
+import { Image, ImageSourcePropType, StyleSheet, View } from 'react-native';
 import { AppStackNavigationType } from './types';
 import HomeScreen from '../components/pages/HomeScreen';
 import SearchScreen from '../components/pages/SearchScreen';
@@ -19,11 +19,11 @@ type MyTabsType = {
 const AppTabBar = () => {
     const Tab = createBottomTabNavigator<AppStackNavigationType>()
     const MyTabs: MyTabsType[] = [
-        { name: 'home', routeName: 'homeScreen', component: HomeScreen, tabIcon: Images.ic_home },
-        { name: 'search', routeName: 'searchScreen', component: SearchScreen, tabIcon: Images.ic_search },
-        { name: 'message', routeName: 'MessageScreen', component: MessageScreen, tabIcon: Images.ic_message },
-        { name: 'reels', routeName: 'feedScreen', component: FeedScreen, tabIcon: Images.ic_feed },
-        { name: 'settings', routeName: 'settingsScreen', component: SettingsScreen, tabIcon: Images.ic_settings }
+        { name: 'Home', routeName: 'homeScreen', component: HomeScreen, tabIcon: Images.ic_home },
+        { name: 'Search', routeName: 'searchScreen', component: SearchScreen, tabIcon: Images.ic_search },
+        { name: 'Message', routeName: 'MessageScreen', component: MessageScreen, tabIcon: Images.ic_message },
+        { name: 'Reels', routeName: 'feedScreen', component: FeedScreen, tabIcon: Images.ic_feed },
+        { name: 'Settings', routeName: 'settingsScreen', component: SettingsScreen, tabIcon: Images.ic_settings }
     ]
 
     return (
@@ -39,11 +39,19 @@ const AppTabBar = () => {
                         {...({
                             'options':
                             {
-                                'tabBarIcon': ({ focused, color, size }) => <Image source={item.tabIcon}
-                                    tintColor={focused ? 'black' : 'grey'}
-                                    style={{ width: 26, height: 26, resizeMode: 'contain' }} />,
+                                'tabBarIcon': ({ focused, color, size }) => focused ?
+                                    <View style={{backgroundColor:'lightgray',paddingHorizontal:10,paddingVertical:3,borderRadius:50}}>
+                                        <Image source={item.tabIcon}
+                                            tintColor={focused ? 'black' : 'grey'}
+                                            style={{ width: 26, height: 26, resizeMode: 'contain' }} />
+                                    </View>
+                                    : <Image source={item.tabIcon}
+                                        tintColor={focused ? 'black' : 'grey'}
+                                        style={{ width: 26, height: 26, resizeMode: 'contain' }} />,
                                 'tabBarLabel': item.name,
-                                'tabBarLabelStyle': { color: 'black', fontSize: 12 }
+                                'tabBarLabelStyle': { color: 'black', fontSize: 14 },
+                                'tabBarStyle': { height: 60 }
+
                             },
                         })}
                     />

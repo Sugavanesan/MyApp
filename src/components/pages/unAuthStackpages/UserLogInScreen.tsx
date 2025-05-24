@@ -4,8 +4,16 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../firebase/config';
 import useAppNavigation from '../../../navigators/useAppNavigation';
 import { Images } from '../../../utilis/Images';
+import AppLoader from '../../atoms/AppLoader';
+import { useAppDispatch } from '../../../redux/store';
+import { AuthAction } from '../../../redux/reducers/AuthReducer';
+import { userDetailsAction } from '../../../redux/reducers/UserReducer';
+import { FirebaseError } from 'firebase/app';
 
 const UserLogInScreen = () => {
+
+    const dispatch = useAppDispatch()
+    const [loader, setLoader] = useState(false)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { navigation, setScreenOptions } = useAppNavigation()
@@ -16,15 +24,51 @@ const UserLogInScreen = () => {
         })
     }, [navigation])
 
-    const handleLogin = () => {
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                Alert.alert('Success', `Welcome back, ${user.email}!`);
-            })
-            .catch((error) => {
-                Alert.alert('Error', error.message); // Display error message if login fails
-            });
+    const handleLogin = async () => {
+        if (!email || !password) {
+            Alert.alert('Error', 'Please fill all the fields');
+            return
+        }
+        try {
+            setLoader(true)
+            const response = await signInWithEmailAndPassword(auth, email, password)
+            const user = response.user;
+            console.log('login res-->', response)
+            dispatch(AuthAction.login())
+            dispatch(userDetailsAction.updateUserDetails({
+                uid: user.uid, 'displayName': user.displayName || '',
+                email: user.email || '', emailVerified: user.emailVerified
+            }))
+
+        } catch (error) {
+            console.log('error', error)
+            const firebaseError = error as FirebaseError;
+
+            let message = 'Something went wrong. Please try again.';
+
+            switch (firebaseError.code) {
+                case 'auth/invalid-email':
+                    message = 'Invalid email format.';
+                    break;
+                case 'auth/user-not-found':
+                    message = 'No user found with this email.';
+                    break;
+                case 'auth/wrong-password':
+                    message = 'Incorrect password.';
+                    break;
+                case 'auth/too-many-requests':
+                    message = 'Too many failed attempts. Please try again later.';
+                    break;
+                default:
+                    message = firebaseError.message; // fallback to Firebase message
+                    break;
+            }
+
+            Alert.alert('Login Error', message);
+        }
+        finally {
+            setLoader(false)
+        }
     };
 
     return (
@@ -35,8 +79,10 @@ const UserLogInScreen = () => {
             <ScrollView
                 style={{ flexGrow: 1 }}
                 contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps="handled"
             >
                 <ImageBackground style={{ flexGrow: 1 }} source={Images.ic_login_background} resizeMode="cover">
+                    <AppLoader loading={loader} />
                     <View style={styles.container}>
                         <Text style={styles.title}>LogIn</Text>
                         <TextInput

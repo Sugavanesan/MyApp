@@ -12,18 +12,22 @@ const rootReducer = combineReducers({
 
 type RootState = ReturnType<typeof rootReducer>;
 
-const persistConfig:PersistConfig<RootState> = {
+const persistConfig: PersistConfig<RootState> = {
     key: "root",
-    'storage': AsyncStorage,    
+    'storage': AsyncStorage,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({
-    'devTools':true,
+    'devTools': true,
     reducer: persistedReducer,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: false, 
+        }),
 });
-export const persistedStore=persistStore(store);
+export const persistedStore = persistStore(store);
 
 export const useAppDispatch: () => typeof store.dispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<ReturnType<typeof store.getState>> = useSelector;

@@ -4,9 +4,16 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../firebase/config';
 import useAppNavigation from '../../../navigators/useAppNavigation';
 import { Images } from '../../../utilis/Images';
+import { useAppDispatch } from '../../../redux/store';
+import { AuthAction } from '../../../redux/reducers/AuthReducer';
+import AppLoader from '../../atoms/AppLoader';
+import { userDetailsAction } from '../../../redux/reducers/UserReducer';
+import { FirebaseError } from 'firebase/app';
 
 const UserRegisterScreen = () => {
 
+  const dispatch = useAppDispatch()
+  const [loader, setLoader] = useState(false)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,21 +25,60 @@ const UserRegisterScreen = () => {
     })
   }, [navigation])
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill all the fields');
+      return
+    }
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
+      setPassword('');
+      setConfirmPassword('');
       return;
     }
+    if(password.length < 8){
+      Alert.alert('Error', 'Password must be at least 6 characters');
+      return
+    }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        Alert.alert('Success', `Welcome, ${user.email}!`);
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        Alert.alert('Error', errorMessage);
-      });
+    try {
+      setLoader(true)
+      const response = await createUserWithEmailAndPassword(auth, email, password)
+      const user = response.user;
+      Alert.alert('Success', `Welcome, ${user.email}!`);
+      dispatch(AuthAction.login())
+      dispatch(userDetailsAction.updateUserDetails({
+        uid: user.uid, 'displayName': user.displayName || '',
+        email: user.email || '', emailVerified: user.emailVerified
+      }))
+    } catch (error) {
+      console.log('error', error)
+      const firebaseError = error as FirebaseError;
+
+      let message = 'Registration failed. Please try again.';
+
+      switch (firebaseError.code) {
+        case 'auth/email-already-in-use':
+          message = 'This email is already in use.';
+          break;
+        case 'auth/invalid-email':
+          message = 'Invalid email format.';
+          break;
+        case 'auth/weak-password':
+          message = 'Password is too weak (min 6 characters).';
+          break;
+        case 'auth/operation-not-allowed':
+          message = 'Email/password sign-up is not enabled.';
+          break;
+        default:
+          message = firebaseError.message; // fallback
+          break;
+      }
+
+      Alert.alert('Registration Error', message);
+    } finally {
+      setLoader(false)
+    }
   };
 
   return (
@@ -43,8 +89,10 @@ const UserRegisterScreen = () => {
       <ScrollView
         style={{ flexGrow: 1 }}
         contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
       >
         <ImageBackground style={{ flexGrow: 1 }} source={Images.ic_login_background} resizeMode="cover">
+          <AppLoader loading={loader} />
           <View style={styles.container}>
             <Text style={styles.title}>Register</Text>
             <TextInput
