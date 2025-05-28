@@ -9,7 +9,8 @@ export type AppStackNavigationType = {
     settingsScreen: undefined,
     profileScreen: undefined,
     discussionScreen: {
-        discussionId: string
+        discussionId: string,
+        chatTitle: string
     },
     addPhotoScreen: undefined
     loginscreen: undefined

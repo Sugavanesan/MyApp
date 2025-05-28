@@ -79,7 +79,8 @@ const MessageScreen = () => {
                 renderItem={({ item, index }: { item: MessageInfoType, index: number }) => {
                     return (
                         <Pressable onPress={() => navigation.navigation.navigate('discussionScreen', {
-                            'discussionId': item.id
+                            'discussionId': item.id,
+                            'chatTitle': item.title
                         })}
                             style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
                         >

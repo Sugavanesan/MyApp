@@ -22,11 +22,11 @@ const DiscussionScreen = () => {
 
     useEffect(() => {
         navigation.setScreenOptions({
-            'headerTitle': "Discussion",
+            'headerTitle': route.chatTitle || "Discussion",
             'headerTitleAlign': 'center',
         })
         discussionhook?.removeUnreadCount()
-    }, [])
+    }, [navigation])
 
     const handlePress = (data: string) => {
         console.log({ data })
