@@ -9,19 +9,21 @@ import AppTabBar from './AppTabBar';
 import UserLogInScreen from '../components/pages/unAuthStackpages/UserLogInScreen';
 import UserRegisterScreen from '../components/pages/unAuthStackpages/UserRegisterScreen';
 import { useAppSelector } from '../redux/store';
+import ChatRoom from '../components/pages/chatmodule/ChatRoom';
 
 const RouteNavigation = () => {
     const Stack = createNativeStackNavigator<AppStackNavigationType>()
     const authDetails = useAppSelector(state => state.authreducer)
 
     const AuthStack = (
-        <Stack.Navigator 
+        <Stack.Navigator
             initialRouteName='mainTabs'
         >
-            <Stack.Screen name='mainTabs' component={AppTabBar}  options={{ headerShown: false }} />
+            <Stack.Screen name='mainTabs' component={AppTabBar} options={{ headerShown: false }} />
             <Stack.Screen name='profileScreen' component={ProfileScreen} />
             <Stack.Screen name='addPhotoScreen' component={AddPhotoScreen} />
             <Stack.Screen name='discussionScreen' component={DiscussionScreen} />
+            <Stack.Screen name='chatRoomScreen' component={ChatRoom} />
         </Stack.Navigator>
     )
 

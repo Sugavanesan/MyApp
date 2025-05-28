@@ -4,8 +4,12 @@ const initialState: UserStateType = {
     userDetails: {
         uid: '',
         displayName: '',
+        nickName: '',
         email: '',
-        emailVerified: false
+        private_account: false,
+        emailVerified: false,
+        profilePhoto: '',
+        dob:''
     }
 }
 const UserSlice = createSlice({

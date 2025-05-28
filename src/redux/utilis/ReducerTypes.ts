@@ -4,9 +4,13 @@ export interface UserStateType {
 
 export interface userDetailsType {
     uid: string,
-    displayName: string,
+    userName: string,
     email: string
     emailVerified: boolean
+    nickName?: string
+    private_account?: boolean
+    profilePhoto?: string
+    dob?: string
 }
 
 export interface AuthStateType {

@@ -38,31 +38,45 @@
         }
     },
     "Discussions": {
-        "discussionId1": {
-            "createdBy": "userId1",
-            "createdAt": "2024-11-27T12:20:00Z",
-            "last_message": "helllo",
-            "title": "grp1",
+        "user123_user456": {
+            "createdBy": "user123",
+            "title": "Chat between user123 and user456",
+            "createdAt": "2025-05-25T12:00:00Z",
+            "updatedAt": "2025-05-25T12:01:00Z",
+            "last_message": "Hello!",
+            "image": "",
+            "isGroup": false,
+            "participantsList": ["user123", "user456"],
             "participants": {
-                "userId": {
-                    "pinned": true,
+                "user123": {
+                    "pinned": false,
+                    "UnreadCount": 0,
+                    "participantsStatus": 1,
+                    "archive": false,
+                    "lastSeenMessageId": "msg1",
+                    "lastSeenAt": "2025-05-25T12:01:00Z",
+                    "userName": "John Doe"
+                },
+                "user456": {
+                    "pinned": false,
                     "UnreadCount": 1,
                     "participantsStatus": 1,
-                    "archive": false
-                }
-            },
-            "Messages": {
-                "messageId1": {
-                    "sentBy": "userId1",
-                    "message": "Are we still meeting at 5?",
-                    "sentAt": "2024-11-27T12:25:00Z",
-                    "isDelete": false,
-                    "media": {
-                        "type": "image",
-                        "url": "https://firebase.storage.url/image2.jpg"
-                    }
+                    "archive": false,
+                    "lastSeenMessageId": "msg1",
+                    "lastSeenAt": "2025-05-25T12:01:00Z",
+                    "userName": "Jane baee"
                 }
             }
         }
+    },
+    "Discussions/user123_user456/messages/msg1": {
+        "sentBy": "user123",
+        "message": "Hello!",
+        "sentAt": "2025-05-25T12:01:00Z",
+        "isDelete": false,
+        "messageType": "text",
+        "edited": false,
+        "editedAt": "2025-05-25T12:01:00Z",
+        "media": null
     }
 }

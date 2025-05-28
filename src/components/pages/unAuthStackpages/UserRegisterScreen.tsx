@@ -9,6 +9,8 @@ import { AuthAction } from '../../../redux/reducers/AuthReducer';
 import AppLoader from '../../atoms/AppLoader';
 import { userDetailsAction } from '../../../redux/reducers/UserReducer';
 import { FirebaseError } from 'firebase/app';
+import { firebase } from '@react-native-firebase/firestore';
+import { randomString } from '../../../utilis/CommonFunction';
 
 const UserRegisterScreen = () => {
 
@@ -36,7 +38,7 @@ const UserRegisterScreen = () => {
       setConfirmPassword('');
       return;
     }
-    if(password.length < 8){
+    if (password.length < 8) {
       Alert.alert('Error', 'Password must be at least 6 characters');
       return
     }
@@ -45,12 +47,26 @@ const UserRegisterScreen = () => {
       setLoader(true)
       const response = await createUserWithEmailAndPassword(auth, email, password)
       const user = response.user;
-      Alert.alert('Success', `Welcome, ${user.email}!`);
+
+      //create user in firestoredatabase
+
+      await firebase.firestore().collection("users").doc(user.uid).set({
+        userName: randomString(10),
+        nickName: "",
+        dob: "",
+        profilePhoto: "",
+        private_account: false,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      console.log('✅ User document created successfully');
+
       dispatch(AuthAction.login())
       dispatch(userDetailsAction.updateUserDetails({
         uid: user.uid, 'displayName': user.displayName || '',
         email: user.email || '', emailVerified: user.emailVerified
       }))
+
     } catch (error) {
       console.log('error', error)
       const firebaseError = error as FirebaseError;

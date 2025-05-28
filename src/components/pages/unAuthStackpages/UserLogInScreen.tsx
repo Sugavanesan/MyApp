@@ -9,6 +9,8 @@ import { useAppDispatch } from '../../../redux/store';
 import { AuthAction } from '../../../redux/reducers/AuthReducer';
 import { userDetailsAction } from '../../../redux/reducers/UserReducer';
 import { FirebaseError } from 'firebase/app';
+import { firebase } from '@react-native-firebase/firestore';
+import { userDetailsType } from '../../../redux/utilis/ReducerTypes';
 
 const UserLogInScreen = () => {
 
@@ -33,13 +35,21 @@ const UserLogInScreen = () => {
             setLoader(true)
             const response = await signInWithEmailAndPassword(auth, email, password)
             const user = response.user;
-            console.log('login res-->', response)
+           
+            const userDetails = await firebase.firestore().collection("users").doc(user.uid).get()
+            const UserData= userDetails.data() as userDetailsType
+            
             dispatch(AuthAction.login())
             dispatch(userDetailsAction.updateUserDetails({
-                uid: user.uid, 'displayName': user.displayName || '',
-                email: user.email || '', emailVerified: user.emailVerified
+                uid: user.uid,
+                email: user.email || '',
+                emailVerified: user.emailVerified,
+                'dob': UserData.dob || '',
+                'nickName': UserData.nickName || '',
+                'private_account': UserData.private_account,
+                'profilePhoto': UserData.profilePhoto || '',
+                'userName': UserData.userName || '',
             }))
-
         } catch (error) {
             console.log('error', error)
             const firebaseError = error as FirebaseError;

@@ -25,14 +25,14 @@ const ChatInfoCard: FC<ChatInfoCardType> = ({ style, image, title, lastMessage, 
                 <Text numberOfLines={1} style={{ fontWeight: 'bold', fontSize: 16 }}>{title}</Text>
                 <Text style={{ fontSize: 16 }} numberOfLines={1} >{lastMessage}</Text>
             </View>
-            <View style={{ gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ gap: 4, alignItems: 'flex-end' }}>
                 <Text>{time}</Text>
-                <View style={{
+                {!!unreadCount && <View style={{
                     backgroundColor: 'lightblue', borderWidth: 1, borderRadius: 50,
                     justifyContent: 'center', alignItems: 'center', paddingVertical: 2, paddingHorizontal: 6
                 }}>
                     <Text style={{ fontSize: 14 }}>{unreadCount}</Text>
-                </View>
+                </View>}
             </View>
         </View>
     );

@@ -15,19 +15,17 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message, messageType, time }) => {
         </View>
     )
     return (
-        <View style={{}}>
-            <View style={[{ flexDirection: 'row', gap: 5, alignItems: 'center' },
-            messageType === 'sent'
-                ? { alignSelf: 'flex-end' } : { alignSelf: 'flex-start' }]}>
-                {messageType === 'received' && ProfileImage}
-                <TouchableOpacity style={[styles.container, messageType === 'sent'
-                    && { backgroundColor: 'lightgreen' }]}
-                    activeOpacity={0.8} >
-                    <AppText text={message} style={{ fontSize: 16 }} />
-                    <AppText text={time} style={{ fontSize: 12, color: 'gray', alignSelf: 'flex-end' }} />
-                </TouchableOpacity>
-                {messageType === 'sent' && ProfileImage}
-            </View>
+        <View style={[{ flexDirection: 'row', gap: 5, alignItems: 'center' },
+        messageType === 'sent'
+            ? { alignSelf: 'flex-end' } : { alignSelf: 'flex-start' }]}>
+            {messageType === 'received' && ProfileImage}
+            <TouchableOpacity style={[styles.container, messageType === 'sent'
+                && { backgroundColor: 'lightgreen',minWidth:100,alignSelf:'flex-end' }]}
+                activeOpacity={0.8} >
+                <AppText text={message} style={{ fontSize: 16 }} />
+                <AppText text={time} style={{ fontSize: 12, color: 'gray', alignSelf: 'flex-end' }} />
+            </TouchableOpacity>
+            {messageType === 'sent' && ProfileImage}
         </View>
     );
 }

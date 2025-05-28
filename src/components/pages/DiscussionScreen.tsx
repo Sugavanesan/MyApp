@@ -4,25 +4,40 @@ import useAppNavigation from '../../navigators/useAppNavigation';
 import AppButton from '../atoms/AppButton';
 import DiscussionTextInput from '../organism/DiscussionTextInput';
 import ChatBubble from '../atoms/ChatBubble';
+import { useRoute } from '@react-navigation/native';
+import { useAppRoute } from '../../navigators/types';
+import { useChatMessageHook } from '../hooks/ChatMessageHooks';
+import { messageType } from '../../api/types/ResponseType';
+import { useAppSelector } from '../../redux/store';
+import { formatLastSeenMessage, formatTimestampToTime } from '../../utilis/CommonFunction';
 
 
 const DiscussionScreen = () => {
     const navigation = useAppNavigation()
+    const route = useAppRoute<'discussionScreen'>().params
     const TextInputRef = useRef<any>(null)
     const [textInputHeight, setTextInputHeight] = useState(0)
-
+    const discussionhook = useChatMessageHook({ discussionId: route.discussionId })
+    const userDetails = useAppSelector(state => state.userreducer.userDetails)
 
     useEffect(() => {
         navigation.setScreenOptions({
             'headerTitle': "Discussion",
             'headerTitleAlign': 'center',
         })
+        discussionhook?.removeUnreadCount()
     }, [])
 
-    const handlePress = () => {
-
+    const handlePress = (data: string) => {
+        console.log({ data })
+        const messageText = data.trim();
+        if (!messageText) {
+            return;
+        }
+        discussionhook?.sendMessage(messageText)
+        TextInputRef?.current?.clearText()
     }
-    console.log('height', textInputHeight)
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <KeyboardAvoidingView style={{ flex: 1 }}
@@ -31,28 +46,29 @@ const DiscussionScreen = () => {
                     Platform.OS === 'ios' ? textInputHeight + 88 : 88 + textInputHeight}
             >
                 <FlatList
-                    data={Array.from({ length: 20 })}
+                    data={discussionhook?.chatMessages}
                     contentContainerStyle={{
                         flexGrow: 1,
                         gap: 6,
                         padding: 12
                     }}
                     inverted
+                    onResponderEnd={() => discussionhook?.getMessages()}
                     keyboardShouldPersistTaps={'handled'}
-                    renderItem={({ item, index }) => {
+                    renderItem={({ item, index }: { item: messageType, index: number }) => {
                         return (
                             <View>
                                 <ChatBubble
-                                    message={'hii byee hii byee hii byee hii byeehii byeehii byeehii byee hii byeehii byeehii byeehii byeehii byeehii byeehii byeehii byeehii byeehii byeehii byeehii byeehii byee'}
-                                    messageType={index % 2 == 0 ? 'sent' : 'received'}
-                                    time='10.00 am'
+                                    message={item.message}
+                                    messageType={userDetails?.uid === item.sentBy ? 'sent' : 'received'}
+                                    time={formatTimestampToTime(item.sentAt as any)}
                                 />
                             </View>
                         )
                     }}
                 />
             </KeyboardAvoidingView>
-            <DiscussionTextInput ref={TextInputRef} setTextInputHeight={setTextInputHeight} />
+            <DiscussionTextInput ref={TextInputRef} setTextInputHeight={setTextInputHeight} callback={handlePress} />
         </SafeAreaView>
     );
 }

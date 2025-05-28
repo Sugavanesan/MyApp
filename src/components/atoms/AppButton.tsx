@@ -1,14 +1,15 @@
 import React, { FC } from 'react';
-import { StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
+import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 type AppButtonType = {
     style?: ViewStyle
+    textStyle?: TextStyle
     title: string
     onPress: () => void
 }
-const AppButton: FC<AppButtonType> = ({ style, title, onPress }) => {
+const AppButton: FC<AppButtonType> = ({ style, title, onPress, textStyle }) => {
     return (
-        <TouchableOpacity style={[style, styles.btnStyle]} onPress={onPress}>
-            <Text style={{ color: 'black', textAlign: 'center' }}>{title}</Text>
+        <TouchableOpacity style={[styles.btnStyle, style]} onPress={onPress}>
+            <Text style={[{ color: 'black', textAlign: 'center' }, textStyle]}>{title}</Text>
         </TouchableOpacity>
     );
 }

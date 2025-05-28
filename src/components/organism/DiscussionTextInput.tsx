@@ -4,7 +4,7 @@ import AppTextInput from '../molecules/AppTextInput';
 import { Images } from '../../utilis/Images';
 import { TextInput } from 'react-native-paper';
 
-const DiscussionTextInput = forwardRef(({ setTextInputHeight }: { setTextInputHeight: any }, ref) => {
+const DiscussionTextInput = forwardRef(({ setTextInputHeight, callback }: { setTextInputHeight: any, callback?: any }, ref) => {
     const [text, setText] = useState('');
     const [height, setHeight] = useState(0)
     const viewRef = useRef(null);
@@ -12,7 +12,8 @@ const DiscussionTextInput = forwardRef(({ setTextInputHeight }: { setTextInputHe
     useImperativeHandle(ref, () => ({
         getText: () => text,
         clearText: () => setText(''),
-        getHeight: () => height
+        getHeight: () => height,
+        onSend: () => setText(''),
     }));
 
     return (
@@ -31,7 +32,7 @@ const DiscussionTextInput = forwardRef(({ setTextInputHeight }: { setTextInputHe
                 multiline
                 cursorColor='black'
             />
-            <TouchableOpacity style={styles.sendCotainer}>
+            <TouchableOpacity style={[styles.sendCotainer]} disabled={!text} onPress={() => callback?.(text)} >
                 <Image style={{ width: 24, height: 24 }} source={Images.ic_send} />
             </TouchableOpacity>
         </View>
