@@ -94,7 +94,7 @@ android {
             keyPassword 'android'
         }
         release{
-            storeFile file('release.keystore')
+            storeFile file("keystore/release.jks")
             storePassword 'mynewapp'
             keyAlias 'mynewappkeyalias'
             keyPassword 'mynewapp'
