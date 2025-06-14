@@ -46,3 +46,51 @@ export const formatTimestampToTime = (timestamp: { _seconds: number, _nanosecond
 
     return `${formattedHours}:${formattedMinutes} ${ampm}`;
 };
+
+
+export const getDateLabel = (current, previous) => {
+    if (!current) return null;
+
+    const currentDate = current?.toDate?.() || new Date(current);
+    const previousDate = previous?.toDate?.() || new Date(previous);
+
+    const currentDay = currentDate.getDate();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    const prevDay = previousDate.getDate();
+    const prevMonth = previousDate.getMonth();
+    const prevYear = previousDate.getFullYear();
+
+    const isSameDay =
+        currentDay === prevDay &&
+        currentMonth === prevMonth &&
+        currentYear === prevYear;
+
+    if (!isSameDay) {
+        const now = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(now.getDate() - 1);
+
+        const isToday =
+            currentDay === now.getDate() &&
+            currentMonth === now.getMonth() &&
+            currentYear === now.getFullYear();
+
+        const isYesterday =
+            currentDay === yesterday.getDate() &&
+            currentMonth === yesterday.getMonth() &&
+            currentYear === yesterday.getFullYear();
+
+        if (isToday) return 'Today';
+        if (isYesterday) return 'Yesterday';
+
+        const dd = String(currentDay).padStart(2, '0');
+        const mm = String(currentMonth + 1).padStart(2, '0');
+        const yyyy = currentYear;
+        return `${dd}/${mm}/${yyyy}`;
+    }
+
+    return null;
+};
+

@@ -36,7 +36,6 @@ const MessageScreen = () => {
                 .where("participantsList", "array-contains", userId)
                 .onSnapshot((data) => {
                     const Data = data.docs?.map(doc => ({ id: doc.id, ...doc.data() }))
-                    console.log('dataaa',(data.docs),userId)
                     if (!Data.length) return 
                     const formatedData: MessageInfoType[] = Data.map((item: any) => {
                         const lastSeen = formatLastSeenMessage(item.updatedAt)

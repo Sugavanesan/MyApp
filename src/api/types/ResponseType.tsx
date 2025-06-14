@@ -5,7 +5,7 @@ export interface MessageInfoType {
     title: string,
     UnreadCount: number,
     updatedAt: string,
-    last_message: string
+    last_message: messageType
     image: ImageSourcePropType
 }
 

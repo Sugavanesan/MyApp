@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { MessageInfoType, messageType } from "../../api/types/ResponseType"
 import { useAppSelector } from "../../redux/store"
 import { firebase } from "@react-native-firebase/firestore"
@@ -7,71 +7,124 @@ export const useChatMessageHook = ({ discussionId }: { discussionId: string }) =
     const [loader, setLoader] = useState(false)
     const [chatMessages, setChatMessages] = useState<messageType[]>([])
     const [lastDoc, setLastDoc] = useState<any>(null)
+    const [hasmoreData, setHasMoreData] = useState(false)
     const userDetails = useAppSelector(state => state.userreducer.userDetails)
 
     const MessageLimit = 20
     const db = firebase.firestore()
+
+    const messageListenersRef = useRef([]);
+
     const getMessages = useCallback(async () => {
-        if (!discussionId || !lastDoc) return;
+        if (!discussionId || !lastDoc || loader || !hasmoreData) return;
+
+        setLoader(true);
+
         try {
-            const snapshot = await db
+            const query = db
                 .collection("Discussion")
                 .doc(discussionId)
                 .collection("messages")
                 .orderBy("sentAt", "desc")
                 .startAfter(lastDoc)
-                .limit(MessageLimit)
-                .get();
+                .limit(MessageLimit);
+
+            const snapshot = await query.get();
 
             const moreMessages = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data(),
             }));
 
-            setMessages(prev => [...prev, ...moreMessages]); // Append to existing list
+            if (moreMessages.length === 0) {
+                setHasMoreData(false);
+            } else {
+                const newLastDoc = snapshot.docs[snapshot.docs.length - 1];
+                setLastDoc(newLastDoc);
+                setChatMessages(prevMessages => [...prevMessages, ...moreMessages]);
 
-            if (snapshot.docs.length > 0) {
-                setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+                // 🔁 Add listener for this page
+                const unsubscribe = query.onSnapshot(snap => {
+                    snap.docChanges().forEach(change => {
+                        const data = { id: change.doc.id, ...change.doc.data() };
+                        if (change.type === "modified") {
+                            setChatMessages(prev =>
+                                prev.map(msg => (msg.id === data.id ? data : msg))
+                            );
+                        }
+                    });
+                });
+
+                messageListenersRef.current.push(unsubscribe);
             }
         } catch (error) {
             console.error("Error loading more messages:", error);
         } finally {
+            setLoader(false);
         }
-    }, [discussionId, userDetails?.uid]);
+    }, [discussionId, userDetails?.uid, lastDoc, chatMessages, loader, hasmoreData]);
+
 
     useEffect(() => {
         const userId = userDetails?.uid;
-        if (!userId || !discussionId) return;
-        let query = db
+        if (!userId || !discussionId || loader) return;
+        setLoader(true);
+        const fetchInitial = async () => {
+            try {
+                const snapshot = await db
+                    .collection("Discussion")
+                    .doc(discussionId)
+                    .collection("messages")
+                    .orderBy("sentAt", "desc")
+                    .limit(MessageLimit)
+                    .get();
+
+                const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setChatMessages(messages);
+                setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
+                setHasMoreData(messages.length === MessageLimit);
+            } catch (err) {
+                console.error("Initial load failed", err);
+            } finally {
+                setLoader(false);
+            }
+        };
+
+        fetchInitial();
+    }, [discussionId]);
+
+    useEffect(() => {
+        if (!discussionId) return;
+
+        const query = db
             .collection("Discussion")
             .doc(discussionId)
             .collection("messages")
             .orderBy("sentAt", "desc")
             .limit(MessageLimit);
 
-        if (lastDoc) {
-            query = query.startAfter(lastDoc);
-        }
-
-        const unsubscribe = query.onSnapshot(
-            snapshot => {
-                const messages = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                console.log('messages', messages)
-                if (!lastDoc && snapshot.docs.length > 0) {
-                    setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+        const unsubscribe = query.onSnapshot(snapshot => {
+            snapshot.docChanges().forEach(change => {
+                const data = { id: change.doc.id, ...change.doc.data() };
+                if (change.type === "added") {
+                    setChatMessages(prev => [data, ...prev]);
+                } else if (change.type == 'modified') {
+                    setChatMessages(prev => {
+                        const index = prev.findIndex(item => item.id === data.id);
+                        if (index !== -1) {
+                            const updated = [...prev];
+                            updated[index] = data;
+                            return updated;
+                        }
+                        return prev;
+                    });
                 }
+            });
+        });
 
-                setChatMessages(messages);
-            },
-            error => {
-                console.error("Error fetching messages:", error);
-            }
-        );
         return () => unsubscribe();
-    }, [discussionId, userDetails?.uid]);
+    }, [discussionId]);
+
 
     const removeUnreadCount = useCallback(async () => {
         db.collection("Discussion")
@@ -81,7 +134,7 @@ export const useChatMessageHook = ({ discussionId }: { discussionId: string }) =
                 [`participants.${userDetails.uid}.lastSeenAt`]: firebase.firestore.FieldValue.serverTimestamp(),
             })
             .then(() => {
-                console.log("Unread count removed successfully!");
+
             })
             .catch(error => {
                 console.error("Error removing unread count:", error);
@@ -107,30 +160,29 @@ export const useChatMessageHook = ({ discussionId }: { discussionId: string }) =
             });
 
             await docRef.update(updateObj);
-            console.log("Unread count updated for all other participants.");
         } catch (error) {
             console.error("Error updating unread counts:", error);
         }
     }, [discussionId, userDetails?.uid])
 
     const sendMessage = useCallback(async (message: string) => {
+        const newMessage = {
+            sentBy: userDetails?.uid,
+            message,
+            sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+            "isDelete": false,
+            "messageType": "text",
+            "edited": false,
+            "editedAt": firebase.firestore.FieldValue.serverTimestamp(),
+            "media": null
+        }
         db
             .collection("Discussion")
             .doc(discussionId)
             .collection("messages")
-            .add({
-                sentBy: userDetails?.uid,
-                message,
-                sentAt: firebase.firestore.FieldValue.serverTimestamp(),
-                "isDelete": false,
-                "messageType": message,
-                "edited": false,
-                "editedAt": firebase.firestore.FieldValue.serverTimestamp(),
-                "media": null
-            })
+            .add(newMessage)
             .then(async () => {
-                console.log("Message sent successfully!");
-                db.collection("Discussion").doc(discussionId).update({ last_message: message })
+                db.collection("Discussion").doc(discussionId).update({ last_message: newMessage, updatedAt: firebase.firestore.FieldValue.serverTimestamp() })
                 await updateUnreadCountForOthers(discussionId, userDetails?.uid)
             })
             .catch(error => {
@@ -139,9 +191,24 @@ export const useChatMessageHook = ({ discussionId }: { discussionId: string }) =
 
     }, [discussionId, userDetails?.uid])
 
-    const deleteMessage = async () => {
+    const deleteMessage = useCallback(async (message: messageType) => {
+        db.collection("Discussion")
+            .doc(discussionId)
+            .collection("messages")
+            .doc(message.id)
+            .update({ isDelete: true })
+            .then(() => {
+                db.collection("Discussion").doc(discussionId).update({
+                    "last_message.isDelete": true,
+                    "last_message.message": "",
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                })
+            })
+            .catch(error => {
+                console.error("Error deleting message:", error);
+            });
 
-    }
+    }, [discussionId, userDetails?.uid])
 
     return { loader, chatMessages, removeUnreadCount, getMessages, sendMessage, deleteMessage }
 }

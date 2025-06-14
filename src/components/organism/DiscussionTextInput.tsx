@@ -24,7 +24,8 @@ const DiscussionTextInput = forwardRef(({ setTextInputHeight, callback }: { setT
                 contentStyle={{
                     backgroundColor: 'white',
                     includeFontPadding: false,
-                    borderRadius: 24
+                    borderRadius: 24,
+                    maxHeight: 120
                 }}
                 style={{ flex: 1, backfaceVisibility: 'visible', backgroundColor: 'transparent' }}
                 textColor='black'

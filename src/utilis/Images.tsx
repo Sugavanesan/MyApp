@@ -8,4 +8,5 @@ export const Images = {
     ic_male: require('../assets/images/ic_male.png'),
     ic_female: require('../assets/images/ic_female.png'),
     ic_login_background: require('../assets/images/backgroundImageLog.jpg'),
+    ic_delete: require('../assets/images/ic_delete.png'),
 }

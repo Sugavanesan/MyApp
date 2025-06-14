@@ -21,10 +21,36 @@ const ChatRoom = () => {
     const [searchText, setSearchText] = React.useState('');
     const [loader, setLoader] = useState(false)
 
+    const findisAlreadyExists = async (userId: string, searchUserId: string): Promise<string | boolean> => {
+        const snapshot = await firebase.firestore()
+            .collection('Discussion')
+            .where('participantsList', 'array-contains-any', [userId, searchUserId])
+            .get();
+
+        console.log('snapshot', snapshot?.docs?.map(doc => ({ id: doc.id, ...doc.data() })))
+
+        let existingDiscussion: any = null;
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const participants = data.participantsList;
+
+            if (participants.includes(userId) && participants.includes(searchUserId) && participants.length === 2) {
+                existingDiscussion = { id: doc.id, ...data };
+            }
+        });
+        if (!existingDiscussion) {
+            console.log("Discussion does not exist. Creating a new one...");
+        } else {
+            console.log("Discussion already exists:", existingDiscussion.id);
+        }
+        return existingDiscussion?.id ?? false
+    }
+
     const CreateChatDiscussion = async () => {
         const userId = userDetails?.uid;
         const searchUserId = searchText?.trim();
-        console.log('searchUserId', searchUserId,'userId',userId)   
+
         if (!userId || !searchUserId || userId === searchUserId) {
             Alert.alert('Error', 'Missing user information.');
             return;
@@ -32,14 +58,21 @@ const ChatRoom = () => {
         setLoader(true);
         try {
             const response = await firebase.firestore().collection("users").doc(searchUserId).get();
+            const searchUserData = response.data() as userDetailsType;
 
             if (!response.exists) {
                 Alert.alert('Error', 'User does not exist.');
                 console.log('❌ No user profile found for UID:', searchUserId);
                 return;
             }
-            const searchUserData = response.data() as userDetailsType;
-            await firebase.firestore().collection('Discussion').add({
+            const isChatAlreadyExists = await findisAlreadyExists(userId, searchUserId);
+            if (isChatAlreadyExists) {
+                console.log("Discussion already exists:", isChatAlreadyExists);
+                navigation.navigation.replace('discussionScreen', { 'discussionId': isChatAlreadyExists?.toString(), 'chatTitle': searchUserData?.userName })
+                return
+            }
+
+           const responseData= await firebase.firestore().collection('Discussion').add({
                 createdBy: userId,
                 title: '',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -69,8 +102,7 @@ const ChatRoom = () => {
                     }
                 }
             });
-            console.log('✅ Discussion created successfully');
-            navigation.navigation.goBack()
+            navigation.navigation.replace('discussionScreen', { 'discussionId': responseData?.id, 'chatTitle': response?.data()?.userName })
         } catch (error) {
             console.error('🔥 Error creating discussion:', error);
             Alert.alert('Error', error?.message || 'Failed to create chat discussion.');
