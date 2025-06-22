@@ -5,7 +5,6 @@ import AppTextInput from '../../molecules/AppTextInput';
 import AppButton from '../../atoms/AppButton';
 import { useAppSelector } from '../../../redux/store';
 import { firebase } from '@react-native-firebase/firestore';
-import { auth } from '../../../firebase/config';
 import { userDetailsType } from '../../../redux/utilis/ReducerTypes';
 
 const ChatRoom = () => {

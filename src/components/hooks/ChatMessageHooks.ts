@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { MessageInfoType, messageType } from "../../api/types/ResponseType"
+import {  messageType } from "../../api/types/ResponseType"
 import { useAppSelector } from "../../redux/store"
-import { firebase } from "@react-native-firebase/firestore"
+import { firebase, getFirestore } from "@react-native-firebase/firestore"
 
 export const useChatMessageHook = ({ discussionId }: { discussionId: string }) => {
     const [loader, setLoader] = useState(false)
@@ -10,8 +10,8 @@ export const useChatMessageHook = ({ discussionId }: { discussionId: string }) =
     const [hasmoreData, setHasMoreData] = useState(false)
     const userDetails = useAppSelector(state => state.userreducer.userDetails)
 
+    const db=getFirestore()
     const MessageLimit = 20
-    const db = firebase.firestore()
 
     const messageListenersRef = useRef([]);
 
@@ -212,3 +212,18 @@ export const useChatMessageHook = ({ discussionId }: { discussionId: string }) =
 
     return { loader, chatMessages, removeUnreadCount, getMessages, sendMessage, deleteMessage }
 }
+
+// export const uploadImage = async (imagePath: string): Promise<string> => {
+//   try {
+//     const fileName = `images/${Date.now()}_${imagePath.substring(imagePath.lastIndexOf('/') + 1)}`;
+//     const reference = storage().ref(fileName);
+
+//     await reference.putFile(imagePath); // 🚀 Native direct upload
+//     const downloadURL = await reference.getDownloadURL();
+
+//     return downloadURL;
+//   } catch (error) {
+//     console.error('Upload error:', error);
+//     throw error;
+//   }
+// };

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, Platform, ImageBackground } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../firebase/config';
 import useAppNavigation from '../../../navigators/useAppNavigation';
 import { Images } from '../../../utilis/Images';
 import { useAppDispatch } from '../../../redux/store';
@@ -11,6 +9,8 @@ import { userDetailsAction } from '../../../redux/reducers/UserReducer';
 import { FirebaseError } from 'firebase/app';
 import { firebase } from '@react-native-firebase/firestore';
 import { randomString } from '../../../utilis/CommonFunction';
+import auth from '@react-native-firebase/auth';  
+import firestore from '@react-native-firebase/firestore';
 
 const UserRegisterScreen = () => {
 
@@ -45,12 +45,12 @@ const UserRegisterScreen = () => {
 
     try {
       setLoader(true)
-      const response = await createUserWithEmailAndPassword(auth, email, password)
+      const response = await auth().createUserWithEmailAndPassword(email, password)
       const user = response.user;
 
       //create user in firestoredatabase
 
-      await firebase.firestore().collection("users").doc(user.uid).set({
+      await firestore().collection("users").doc(user.uid).set({
         userName: randomString(10),
         nickName: "",
         dob: "",

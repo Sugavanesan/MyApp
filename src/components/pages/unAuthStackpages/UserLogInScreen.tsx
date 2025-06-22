@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, KeyboardAvoidingView, Platform, ImageBackground, ScrollView } from 'react-native';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../firebase/config';
 import useAppNavigation from '../../../navigators/useAppNavigation';
 import { Images } from '../../../utilis/Images';
 import AppLoader from '../../atoms/AppLoader';
@@ -9,8 +7,9 @@ import { useAppDispatch } from '../../../redux/store';
 import { AuthAction } from '../../../redux/reducers/AuthReducer';
 import { userDetailsAction } from '../../../redux/reducers/UserReducer';
 import { FirebaseError } from 'firebase/app';
-import { firebase } from '@react-native-firebase/firestore';
 import { userDetailsType } from '../../../redux/utilis/ReducerTypes';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const UserLogInScreen = () => {
 
@@ -33,12 +32,15 @@ const UserLogInScreen = () => {
         }
         try {
             setLoader(true)
-            const response = await signInWithEmailAndPassword(auth, email, password)
+            const response = await auth().signInWithEmailAndPassword(email, password)
             const user = response.user;
-           
-            const userDetails = await firebase.firestore().collection("users").doc(user.uid).get()
-            const UserData= userDetails.data() as userDetailsType
-            
+
+            console.log('logged user', user, user.uid)
+
+            const userDetails = await firestore().collection("users").doc(user.uid).get()
+            const UserData = userDetails.data() as userDetailsType
+            console.log('UserData', UserData)
+
             dispatch(AuthAction.login())
             dispatch(userDetailsAction.updateUserDetails({
                 uid: user.uid,
@@ -50,6 +52,7 @@ const UserLogInScreen = () => {
                 'profilePhoto': UserData.profilePhoto || '',
                 'userName': UserData.userName || '',
             }))
+
         } catch (error) {
             console.log('error', error)
             const firebaseError = error as FirebaseError;
