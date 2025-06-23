@@ -10,6 +10,7 @@ import UserLogInScreen from '../components/pages/unAuthStackpages/UserLogInScree
 import UserRegisterScreen from '../components/pages/unAuthStackpages/UserRegisterScreen';
 import { useAppSelector } from '../redux/store';
 import ChatRoom from '../components/pages/chatmodule/ChatRoom';
+import GalleryScreen from '../components/organism/GalleryScreen';
 
 const RouteNavigation = () => {
     const Stack = createNativeStackNavigator<AppStackNavigationType>()
@@ -24,6 +25,7 @@ const RouteNavigation = () => {
             <Stack.Screen name='addPhotoScreen' component={AddPhotoScreen} />
             <Stack.Screen name='discussionScreen' component={DiscussionScreen} />
             <Stack.Screen name='chatRoomScreen' component={ChatRoom} />
+            <Stack.Screen name='galleryScreen' component={GalleryScreen} />
         </Stack.Navigator>
     )
 

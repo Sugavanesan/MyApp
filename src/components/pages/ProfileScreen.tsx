@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Image, KeyboardAvoidingView, PermissionsAndroid, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, Image, KeyboardAvoidingView, PermissionsAndroid, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import useAppNavigation from '../../navigators/useAppNavigation';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { AuthAction } from '../../redux/reducers/AuthReducer';
@@ -20,13 +20,11 @@ const ProfileScreen = () => {
     const dispatch = useAppDispatch()
     const userData = useAppSelector(state => state.userreducer.userDetails)
     const [loader, setLoader] = useState(false)
-    console.log('userData', userData)
+
     const [details, setDetails] = useState({
         userName: userData.userName,
         profilePhoto: userData.profilePhoto
     })
-
-    console.log('userData', userData)
 
     useEffect(() => {
         setScreenOptions({
@@ -108,6 +106,21 @@ const ProfileScreen = () => {
         }
     };
 
+    const handlePickImageOptionusingAlert = () => {
+        Alert.alert('Pick Image', 'Please choose an option', [
+            { text: 'Cancel', onPress: () => { } },
+            {
+                text: 'Camera',
+                onPress: () => openCamera(),
+            },
+            {
+                text: 'Gallery',
+                onPress: () => addImage(),
+                style: 'cancel',
+            },
+        ]);
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <AppLoader loading={loader} />
@@ -129,8 +142,12 @@ const ProfileScreen = () => {
 
                         {/* Profile View Starts */}
                         <View style={{ paddingVertical: 12 }}>
-                            <TouchableOpacity style={{ width: 100, height: 100, alignSelf: 'center' }} onPress={() => addImage()}>
+                            <TouchableOpacity style={{ width: 100, height: 100, alignSelf: 'center' }}
+                                onPress={() => navigation.navigate('galleryScreen', { imageList: [{ id: 1, url: details.profilePhoto! }] })}>
                                 <Image source={details.profilePhoto ? { uri: details.profilePhoto } : Images.ic_male} style={{ width: 100, height: 100, borderRadius: 50, alignSelf: 'center', resizeMode: 'cover', borderWidth: 1, borderColor: 'black' }} />
+                                <TouchableOpacity style={{ position: 'absolute', bottom: -10, right: -10, width: 40, height: 40, backgroundColor: 'white', borderRadius: 50, alignItems: 'center', justifyContent: 'center', borderWidth: 0.5 }} onPress={() => handlePickImageOptionusingAlert()}>
+                                    <Image source={Images.ic_camera} style={{ width: 25, height: 25 }} tintColor={'black'} />
+                                </TouchableOpacity>
                             </TouchableOpacity>
                         </View>
                         <AppTextInput

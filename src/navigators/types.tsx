@@ -15,7 +15,10 @@ export type AppStackNavigationType = {
     addPhotoScreen: undefined
     loginscreen: undefined
     registerscreen: undefined,
-    chatRoomScreen: undefined
+    chatRoomScreen: undefined,
+    galleryScreen: {
+        imageList: { id: number, url: string }[],
+    }
 }
 
 export function useAppRoute<RouteName extends keyof AppStackNavigationType>() {
