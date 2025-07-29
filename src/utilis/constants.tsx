@@ -1,3 +1,3 @@
 export const Constants={
-    'from main':1
+    'from master':1
 }
