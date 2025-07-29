@@ -1,3 +1,6 @@
+import { getDownloadURL, ref, uploadBytes } from "@react-native-firebase/storage";
+import storage from '@react-native-firebase/storage';
+
 export function formatLastSeenMessage(timestamp: any) {
     const date = new Date(timestamp?._seconds * 1000);
     const now = new Date();
@@ -93,4 +96,24 @@ export const getDateLabel = (current, previous) => {
 
     return null;
 };
+
+export const uploadImage = async (uri: string, userId: string) => {
+    try {
+        const filePath = uri.startsWith('file://') ? uri : `file://${uri}`;
+        const storagePath = `users/${userId}/profilePhoto.jpg`;
+        const ref = storage().ref(storagePath);
+
+        console.log('Uploading from:', filePath,ref);
+        await ref.putFile(filePath);
+        console.log('Upload complete');
+
+        const downloadURL = await ref.getDownloadURL();
+        console.log('Uploaded image URL:', downloadURL);
+        return downloadURL;
+    } catch (error) {
+        console.error('Upload failed:', error);
+        return null;
+    }
+};
+
 

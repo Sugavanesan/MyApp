@@ -17,7 +17,10 @@ const UserSlice = createSlice({
     initialState: initialState,
     reducers: {
         updateUserDetails: (state, action: PayloadAction<userDetailsType>) => {
-            state.userDetails = action.payload
+            state.userDetails = {
+                ...state.userDetails,
+                ...action.payload
+            }
         },
         reset: (state) => {
             state.userDetails = initialState.userDetails

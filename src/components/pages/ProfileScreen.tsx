@@ -12,6 +12,9 @@ import { firebase } from '@react-native-firebase/firestore';
 import { Images } from '../../utilis/Images';
 import { NativeModules } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import { uploadImage } from '../../utilis/CommonFunction';
+import storage from '@react-native-firebase/storage';
+
 
 const { ImagePickerModule } = NativeModules;
 
@@ -50,18 +53,20 @@ const ProfileScreen = () => {
 
     const AddUserDetails = async () => {
         const userId = userData.uid
+        console.log('test user-->', userData)
         setLoader(true)
         try {
             console.log('coming here')
-            const downloadURL = await uploadImage(details.profilePhoto, userId);
+
+            const downloadURL = await uploadImage(details.profilePhoto!, userId);
             console.log({ downloadURL })
             const response = await firebase.firestore().collection("users").doc(userId).update({
                 'userName': details.userName,
                 'profilePhoto': downloadURL
             })
             console.log('response', response)
-            dispatch(userDetailsAction.updateUserDetails({ 'userName': details.userName } as any))
-            console.log('response', response)
+            // dispatch(userDetailsAction.updateUserDetails({ 'userName': details.userName, 'profilePhoto': downloadURL } as any))
+            // console.log('response', response)
         } catch (error) {
             console.log('error', error)
         } finally {

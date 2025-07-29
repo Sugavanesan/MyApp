@@ -5,7 +5,15 @@ import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import android.database.Cursor
+import android.os.Build
+import android.os.Environment
+import android.util.Log
+import androidx.core.content.FileProvider
 import com.facebook.react.bridge.*
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ImagePickerModule(private val reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext), ActivityEventListener {
@@ -23,7 +31,6 @@ class ImagePickerModule(private val reactContext: ReactApplicationContext) :
     @ReactMethod
     fun openImagePicker(promise: Promise) {
         val activity = currentActivity
-
 
         if (activity == null) {
             promise.reject("ACTIVITY_NULL", "Current activity is null")
@@ -68,6 +75,16 @@ class ImagePickerModule(private val reactContext: ReactApplicationContext) :
         }
     }
 
+    private fun getRealPathFromURI(uri: Uri): String? {
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = reactContext.contentResolver.query(uri, projection, null, null, null)
+        return cursor?.use {
+            val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            it.moveToFirst()
+            it.getString(columnIndex)
+        }
+    }
+
     override fun onActivityResult(
         activity: Activity?,
         requestCode: Int,
@@ -77,13 +94,27 @@ class ImagePickerModule(private val reactContext: ReactApplicationContext) :
         if (requestCode == 12345) {
             if (resultCode == Activity.RESULT_OK && data != null) {
                 val uri: Uri? = data.data
-                promise?.resolve(uri.toString())
+                if (uri != null) {
+                    val realPath = getRealPathFromURI(uri)
+                    if (realPath != null) {
+                        promise?.resolve("file://$realPath")
+                    } else {
+                        promise?.reject("PATH_RESOLUTION_FAILED", "Failed to resolve image path")
+                    }
+                } else {
+                    promise?.reject("NO_URI", "No image URI returned")
+                }
             } else {
                 promise?.reject("PICKER_CANCELLED", "Image picking cancelled or failed")
             }
         } else if (requestCode == CAMERA_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && imageUri != null) {
-                promise?.resolve(imageUri.toString())
+                val realPath = getRealPathFromURI(imageUri!!)
+                if (realPath != null) {
+                    promise?.resolve("file://$realPath")
+                } else {
+                    promise?.reject("PATH_RESOLUTION_FAILED", "Failed to resolve camera image path")
+                }
             } else {
                 promise?.reject("CAMERA_CANCELLED", "Camera capture cancelled or failed")
             }
