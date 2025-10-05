@@ -100,6 +100,14 @@ android {
             keyPassword 'mynewapp'
         }
     }
+    splits {
+        abi {
+            enable true
+            reset()
+            include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            universalApk true // If true, also generate a universal APK with all ABIs
+        }
+    }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
